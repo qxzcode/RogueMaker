@@ -113,6 +113,7 @@ public class Main {
                 fps = 0;
             }
             
+            RogueMaker.getLevel().update();
             buffer.update(RogueMaker.getLevel());
             
             // draw and stuff

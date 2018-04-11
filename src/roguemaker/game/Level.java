@@ -2,6 +2,9 @@ package roguemaker.game;
 
 import roguemaker.RogueMaker;
 
+import java.util.*;
+import java.util.function.Consumer;
+
 /**
  * @author Quinn Tucker
  */
@@ -13,14 +16,43 @@ public class Level {
         tiles = new TileType[width][height];
     }
     
+    public void update() {
+        for (Entity e : entities) {
+            e.update();
+        }
+        entities.removeAll(entitiesToRemove);
+        entitiesToRemove.clear();
+    }
+    
     public int getWidth() { return width; }
     public int getHeight() { return height; }
     
-    public TileType getTile(int x, int y) { return tiles[x][y]; }
-    public void setTile(int x, int y, int id) { tiles[x][y] = RogueMaker.getTileType(id); }
+    public TileType getTile(int x, int y) {
+        return tiles[x][y];
+    }
+    public void setTile(int x, int y, int id) {
+        tiles[x][y] = RogueMaker.getTileType(id);
+    }
+    
+    public void addEntity(Entity e) {
+        entities.add(e);
+    }
+    public void removeEntity(Entity e) {
+        entitiesToRemove.add(e);
+    }
+    
+    public void forEachEntityAt(int x, int y, Consumer<? super Entity> action) {
+        for (Entity e : entities) {
+            if (e.x == x && e.y == y) {
+                action.accept(e);
+            }
+        }
+    }
     
     protected int width, height;
     
     protected TileType[][] tiles;
+    protected Set<Entity> entities = new HashSet<>();
+    protected List<Entity> entitiesToRemove = new ArrayList<>();
     
 }
