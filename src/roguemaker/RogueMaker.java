@@ -30,6 +30,10 @@ public class RogueMaker {
         RogueMaker.level = Objects.requireNonNull(level);
     }
     
+    public static boolean isKeyPressed(int key) {
+        return Main.pressedKeys.contains(key);
+    }
+    
     private static ArrayList<TileType> tileTypes = new ArrayList<>();
     private static Level level;
     

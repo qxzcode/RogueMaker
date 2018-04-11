@@ -11,6 +11,8 @@ import roguemaker.graphics.ShaderProgram;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -61,6 +63,9 @@ public class Main {
         glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
             if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
                 glfwSetWindowShouldClose(window, true);
+            if (action == GLFW_PRESS || action == GLFW_REPEAT) {
+                pressedKeys.add(key);
+            }
         });
         
         // setup a key callback
@@ -117,6 +122,7 @@ public class Main {
             buffer.update(RogueMaker.getLevel());
             
             // draw and stuff
+            pressedKeys.clear();
             glfwPollEvents();
             glViewport(0, 0, windowWidth, windowHeight);
             glUniform2f(shader.scaleLoc,
@@ -164,5 +170,7 @@ public class Main {
     private static String windowTitle = "RogueMaker";
     private static int windowWidth = 50*20*2, windowHeight = 30*20*2;
     public static ShaderProgram shader;
+    
+    static Set<Integer> pressedKeys = new HashSet<>();
     
 }

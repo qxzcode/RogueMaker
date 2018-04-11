@@ -2,6 +2,7 @@ package roguemaker.example;
 
 import roguemaker.game.Level;
 import roguemaker.game.LevelGenerator;
+import roguemaker.game.PlayerEntity;
 
 import static roguemaker.example.ExampleMod.FLOOR_ID;
 import static roguemaker.example.ExampleMod.WALL_ID;
@@ -21,6 +22,7 @@ public class SimpleGenerator implements LevelGenerator {
             }
         }
         level.addEntity(new DerpEntity(level, 7, 6));
+        level.addEntity(new PlayerEntity(level, 9, 4));
         return level;
     }
     
