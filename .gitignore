@@ -1,0 +1,11 @@
+# user-specific stuff
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/dictionaries/
+
+# libraries
+#.idea/**/libraries/
+#lwjgl/
+
+# build output
+out/
