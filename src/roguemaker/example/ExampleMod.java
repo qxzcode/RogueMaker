@@ -14,8 +14,14 @@ import java.awt.*;
 public class ExampleMod {
     
     public ExampleMod() {
-        FLOOR_ID = RogueMaker.registerTileType(new BasicTileType('.', Color.LIGHT_GRAY, new ColorRange(0.98f, 0.02f)));
-        WALL_ID  = RogueMaker.registerTileType(new BasicTileType('#', Color.BLACK,      new ColorRange(0.5f, 0.05f)));
+        FLOOR_ID = RogueMaker.registerTileType(new BasicTileType(
+                '.', Color.LIGHT_GRAY, new ColorRange(0.98f, 0.02f),
+                false
+        ));
+        WALL_ID  = RogueMaker.registerTileType(new BasicTileType(
+                '#', Color.BLACK,      new ColorRange(0.5f, 0.05f),
+                true
+        ));
         RogueMaker.setLevel(new SimpleGenerator().generate());
     }
     

@@ -12,6 +12,8 @@ public abstract class TileType {
         
     }
     
+    public abstract boolean isSolid();
+    
     public abstract char getChar(Location loc);
     public abstract Color getFGColor(Location loc);
     public abstract Color getBGColor(Location loc);

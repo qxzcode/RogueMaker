@@ -22,6 +22,7 @@ public class Buffer {
         if (width != level.getWidth() || height != level.getHeight())
             throw new IllegalArgumentException("Invalid-sized Level");
         
+        // tiles
         TileType.Location loc = new TileType.Location(level);
         for (int x = 0; x < width; x++) {
             loc.x = x;
@@ -39,6 +40,12 @@ public class Buffer {
                 ttype.getBGColor(loc).getRGBColorComponents(bgGrid[x][y]);
             }
         }
+        
+        // entities
+        level.forEachEntity(e -> {
+            charGrid[e.x][e.y] = e.getChar();
+            e.getColor().getRGBColorComponents(fgGrid[e.x][e.y]);
+        });
     }
     
     public void draw() {

@@ -35,12 +35,16 @@ public class Level {
     }
     
     public void addEntity(Entity e) {
+        assert e.x >= 0 && e.y >= 0 && e.x < width && e.y < height;
         entities.add(e);
     }
     public void removeEntity(Entity e) {
         entitiesToRemove.add(e);
     }
     
+    public void forEachEntity(Consumer<? super Entity> action) {
+        entities.forEach(action);
+    }
     public void forEachEntityAt(int x, int y, Consumer<? super Entity> action) {
         for (Entity e : entities) {
             if (e.x == x && e.y == y) {
