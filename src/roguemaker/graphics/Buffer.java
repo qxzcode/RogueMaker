@@ -4,6 +4,7 @@ import roguemaker.game.Level;
 import roguemaker.game.TileType;
 
 import java.awt.*;
+import java.util.function.Function;
 
 /**
  * @author Quinn Tucker
@@ -30,13 +31,15 @@ public class Buffer {
                 loc.y = y;
                 TileType ttype = level.getTile(x, y);
                 long seed = ((((long) x) << 32) | (((long) y) << 2)) ^ ttype.hashCode();
+    
+                Function<Color, Color> cFunc = level.visibility[x][y]? c -> c : c -> c.darker().darker().darker();
                 
                 loc.rand.setSeed(seed);
                 charGrid[x][y] = ttype.getChar(loc);
                 loc.rand.setSeed(seed+1);
-                ttype.getFGColor(loc).getRGBColorComponents(fgGrid[x][y]);
+                cFunc.apply(ttype.getFGColor(loc)).getRGBColorComponents(fgGrid[x][y]);
                 loc.rand.setSeed(seed+2);
-                ttype.getBGColor(loc).getRGBColorComponents(bgGrid[x][y]);
+                cFunc.apply(ttype.getBGColor(loc)).getRGBColorComponents(bgGrid[x][y]);
             }
         }
         

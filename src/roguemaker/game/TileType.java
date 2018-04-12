@@ -13,6 +13,7 @@ public abstract class TileType {
     }
     
     public abstract boolean isSolid();
+    public abstract boolean isOpaque();
     
     public abstract char getChar(Location loc);
     public abstract Color getFGColor(Location loc);

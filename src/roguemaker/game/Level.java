@@ -15,6 +15,7 @@ public class Level {
         this.width = width;
         this.height = height;
         tiles = new TileType[width][height];
+        visibility = new boolean[width][height];
     }
     
     public void update() {
@@ -23,6 +24,9 @@ public class Level {
         }
         entities.removeAll(entitiesToRemove);
         entitiesToRemove.clear();
+        
+        Entity player = entities.iterator().next();
+        new Visibility(this, player.x, player.y).compute();
     }
     
     public int getWidth() { return width; }
@@ -57,6 +61,7 @@ public class Level {
     protected int width, height;
     
     protected TileType[][] tiles;
+    public boolean[][] visibility;
     protected Set<Entity> entities = new HashSet<>();
     protected List<Entity> entitiesToRemove = new ArrayList<>();
     
