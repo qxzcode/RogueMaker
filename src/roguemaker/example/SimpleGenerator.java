@@ -18,7 +18,7 @@ public class SimpleGenerator implements LevelGenerator {
         for (int x = 0; x < level.getWidth(); x++) {
             for (int y = 0; y < level.getHeight(); y++) {
                 boolean isBorder = x==0 || y==0 || x==level.getWidth()-1 || y==level.getHeight()-1;
-                level.setTile(x, y, isBorder || (x*x + 3*y) % 5 == 1? WALL_ID : FLOOR_ID);
+                level.setTile(x, y, isBorder || (x*x/y + 3*y) % 3 == 1? WALL_ID : FLOOR_ID);
             }
         }
         level.addEntity(new DerpEntity(level, 7, 6));

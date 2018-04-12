@@ -41,11 +41,6 @@ public class Visibility {
      * http://www.adammil.net/blog/v125_Roguelike_Vision_Algorithms.html#mine
      */
     public void compute(Action action) {
-        for (int x = 0; x < level.getWidth(); x++) {
-            for (int y = 0; y < level.getHeight(); y++) {
-                level.visibility[x][y] = false;
-            }
-        }
         computeOctant((x, y) -> cx+x, (x, y) -> cy+y, action);
         computeOctant((x, y) -> cx+y, (x, y) -> cy+x, action);
         computeOctant((x, y) -> cx-y, (x, y) -> cy+x, action);
@@ -68,8 +63,7 @@ public class Visibility {
      * the main recursive method
      */
     private void computeOctant(int x, Slope top, Slope bottom) {
-        int maxX = rangeLimit<0? Integer.MAX_VALUE : rangeLimit;
-        for (; x <= maxX; x++) {
+        for (; rangeLimit < 0 || x <= rangeLimit; x++) {
             // compute the Y coordinates of the top and bottom of the sector. we maintain that top > bottom
             int topY;
             if (top.x == 1) {

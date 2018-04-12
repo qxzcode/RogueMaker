@@ -32,7 +32,11 @@ public class Buffer {
                 TileType ttype = level.getTile(x, y);
                 long seed = ((((long) x) << 32) | (((long) y) << 2)) ^ ttype.hashCode();
     
-                Function<Color, Color> cFunc = level.visibility[x][y]? c -> c : c -> c.darker().darker().darker().darker();
+                Function<Color, Color> cFunc = level.visibility[x][y]?
+                                                   c -> c :
+                                                   level.explored[x][y]?
+                                                       c -> c.darker().darker().darker().darker() :
+                                                       c -> Color.BLACK;
                 
                 loc.rand.setSeed(seed);
                 charGrid[x][y] = ttype.getChar(loc);
@@ -45,8 +49,10 @@ public class Buffer {
         
         // entities
         level.forEachEntity(e -> {
-            charGrid[e.x][e.y] = e.getChar();
-            e.getColor().getRGBColorComponents(fgGrid[e.x][e.y]);
+            if (level.visibility[e.x][e.y]) {
+                charGrid[e.x][e.y] = e.getChar();
+                e.getColor().getRGBColorComponents(fgGrid[e.x][e.y]);
+            }
         });
     }
     

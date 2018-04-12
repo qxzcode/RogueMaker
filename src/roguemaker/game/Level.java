@@ -16,6 +16,7 @@ public class Level {
         this.height = height;
         tiles = new TileType[width][height];
         visibility = new boolean[width][height];
+        explored = new boolean[width][height];
     }
     
     public void update() {
@@ -25,8 +26,16 @@ public class Level {
         entities.removeAll(entitiesToRemove);
         entitiesToRemove.clear();
         
+        for (int x = 0; x < getWidth(); x++) {
+            for (int y = 0; y < getHeight(); y++) {
+                visibility[x][y] = false;
+            }
+        }
         Entity player = entities.iterator().next();
-        new Visibility(this, player.x, player.y).compute((x, y) -> visibility[x][y] = true);
+        new Visibility(this, player.x, player.y).compute((x, y) -> {
+            visibility[x][y] = true;
+            explored[x][y] = true;
+        });
     }
     
     public int getWidth() { return width; }
@@ -61,7 +70,7 @@ public class Level {
     protected int width, height;
     
     protected TileType[][] tiles;
-    public boolean[][] visibility;
+    public final boolean[][] visibility, explored;
     protected Set<Entity> entities = new HashSet<>();
     protected List<Entity> entitiesToRemove = new ArrayList<>();
     
