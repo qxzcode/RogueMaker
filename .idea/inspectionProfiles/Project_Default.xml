@@ -1,8 +1,10 @@
 <component name="InspectionProjectProfileManager">
   <profile version="1.0">
     <option name="myName" value="Project Default" />
+    <inspection_tool class="OptionalUsedAsFieldOrParameterType" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="SameParameterValue" enabled="true" level="TYPO" enabled_by_default="true" />
     <inspection_tool class="StringConcatenationInLoops" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+    <inspection_tool class="UnusedReturnValue" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="WeakerAccess" enabled="true" level="TYPO" enabled_by_default="true">
       <option name="SUGGEST_PACKAGE_LOCAL_FOR_MEMBERS" value="true" />
       <option name="SUGGEST_PACKAGE_LOCAL_FOR_TOP_CLASSES" value="true" />
