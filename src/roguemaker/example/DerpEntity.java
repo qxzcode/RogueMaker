@@ -1,6 +1,6 @@
 package roguemaker.example;
 
-import roguemaker.game.Entity;
+import roguemaker.game.entity.Entity;
 import roguemaker.game.Level;
 
 import java.awt.*;

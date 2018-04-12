@@ -1,6 +1,7 @@
 package roguemaker.game;
 
 import roguemaker.RogueMaker;
+import roguemaker.game.entity.Entity;
 
 import java.util.*;
 import java.util.function.Consumer;

@@ -1,4 +1,6 @@
-package roguemaker.game;
+package roguemaker.game.entity;
+
+import roguemaker.game.Level;
 
 import java.awt.Color;
 import java.util.Objects;
