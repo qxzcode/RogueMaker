@@ -26,7 +26,7 @@ public class Level {
         entitiesToRemove.clear();
         
         Entity player = entities.iterator().next();
-        new Visibility(this, player.x, player.y).compute();
+        new Visibility(this, player.x, player.y).compute((x, y) -> visibility[x][y] = true);
     }
     
     public int getWidth() { return width; }

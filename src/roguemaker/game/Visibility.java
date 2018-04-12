@@ -3,9 +3,7 @@ package roguemaker.game;
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.Queue;
-import java.util.function.Function;
 import java.util.function.IntBinaryOperator;
-import java.util.function.IntUnaryOperator;
 
 /**
  * @author Quinn Tucker
@@ -28,29 +26,36 @@ public class Visibility {
         
     }
     
+    public interface Action {
+        void visible(int x, int y);
+    }
+    
     public Visibility(Level level, int cx, int cy) {
         this.level = level;
         this.cx = cx;
         this.cy = cy;
     }
     
-    public void compute() {
+    /**
+     * NOTE: action may be invoked more than once per visible tile
+     */
+    public void compute(Action action) {
         for (int x = 0; x < level.getWidth(); x++) {
             for (int y = 0; y < level.getHeight(); y++) {
                 level.visibility[x][y] = false;
             }
         }
-        computeOctant((x, y) -> cx+x, (x, y) -> cy+y);
-        computeOctant((x, y) -> cx+y, (x, y) -> cy+x);
-        computeOctant((x, y) -> cx-y, (x, y) -> cy+x);
-        computeOctant((x, y) -> cx-x, (x, y) -> cy+y);
-        computeOctant((x, y) -> cx-x, (x, y) -> cy-y);
-        computeOctant((x, y) -> cx-y, (x, y) -> cy-x);
-        computeOctant((x, y) -> cx+y, (x, y) -> cy-x);
-        computeOctant((x, y) -> cx+x, (x, y) -> cy-y);
+        computeOctant((x, y) -> cx+x, (x, y) -> cy+y, action);
+        computeOctant((x, y) -> cx+y, (x, y) -> cy+x, action);
+        computeOctant((x, y) -> cx-y, (x, y) -> cy+x, action);
+        computeOctant((x, y) -> cx-x, (x, y) -> cy+y, action);
+        computeOctant((x, y) -> cx-x, (x, y) -> cy-y, action);
+        computeOctant((x, y) -> cx-y, (x, y) -> cy-x, action);
+        computeOctant((x, y) -> cx+y, (x, y) -> cy-x, action);
+        computeOctant((x, y) -> cx+x, (x, y) -> cy-y, action);
     }
     
-    private void computeOctant(IntBinaryOperator xFunc, IntBinaryOperator yFunc) {
+    private void computeOctant(IntBinaryOperator xFunc, IntBinaryOperator yFunc, Action action) {
         this.xFunc = xFunc;
         this.yFunc = yFunc;
         
@@ -70,7 +75,7 @@ public class Visibility {
             for (int y = top; y >= bottom; y--) {
                 // mark the cell as visible
                 int wx = xFunc.applyAsInt(cur.x, y), wy = yFunc.applyAsInt(cur.x, y);
-                level.visibility[wx][wy] = true;
+                action.visible(wx, wy);
                 
                 boolean opaque = isOpaque(wx, wy);
                 if (wasLastOpaque.isPresent()) {
