@@ -1,8 +1,5 @@
 package roguemaker.game;
 
-import java.util.LinkedList;
-import java.util.Optional;
-import java.util.Queue;
 import java.util.function.IntBinaryOperator;
 
 /**
@@ -10,20 +7,34 @@ import java.util.function.IntBinaryOperator;
  */
 public class Visibility {
     
-    private static class ColumnPortion {
-        
-        final int x;
-        final int bottomX, bottomY;
-        final int topX, topY;
-        
-        ColumnPortion(int x, int bottomX, int bottomY, int topX, int topY) {
+    //private static class ColumnPortion {
+    //    
+    //    final int x;
+    //    final int bottomX, bottomY;
+    //    final int topX, topY;
+    //    
+    //    ColumnPortion(int x, int bottomX, int bottomY, int topX, int topY) {
+    //        this.x = x;
+    //        this.bottomX = bottomX;
+    //        this.bottomY = bottomY;
+    //        this.topX = topX;
+    //        this.topY = topY;
+    //    }
+    //    
+    //}
+    
+    private static class Slope {
+        Slope(int y, int x) {
             this.x = x;
-            this.bottomX = bottomX;
-            this.bottomY = bottomY;
-            this.topX = topX;
-            this.topY = topY;
+            this.y = y;
         }
         
+        boolean greater(int y, int x) { return this.y*x > this.x*y; }
+        boolean greaterOrEqual(int y, int x) { return this.y*x >= this.x*y; }
+        boolean less(int y, int x) { return this.y*x < this.x*y; }
+        boolean lessOrEqual(int y, int x) { return this.y*x <= this.x*y; }
+        
+        final int x, y;
     }
     
     public interface Action {
@@ -37,7 +48,8 @@ public class Visibility {
     }
     
     /**
-     * NOTE: action may be invoked more than once per visible tile
+     * ported from:
+     * http://www.adammil.net/blog/v125_Roguelike_Vision_Algorithms.html#mine
      */
     public void compute(Action action) {
         for (int x = 0; x < level.getWidth(); x++) {
@@ -58,67 +70,111 @@ public class Visibility {
     private void computeOctant(IntBinaryOperator xFunc, IntBinaryOperator yFunc, Action action) {
         this.xFunc = xFunc;
         this.yFunc = yFunc;
-        
-        Queue<ColumnPortion> queue = new LinkedList<>();
-        queue.add(new ColumnPortion(0, 1, 0, 1, 1));
-        while (!queue.isEmpty()) {
-            ColumnPortion cur = queue.remove();
+        this.action = action;
+        visible(0, 0);
+        computeOctant(1, new Slope(1, 1), new Slope(0, 1));
+    }
+    
+    private static final int rangeLimit = 15;
+    private void computeOctant(int x, Slope top, Slope bottom) {
+        for (; x <= rangeLimit; x++) {
+            // compute the Y coordinates of the top and bottom of the sector. we maintain that top > bottom
+            int topY;
+            if (top.x == 1) {
+                topY = x;
+            } else {
+                topY = ((x * 2 - 1) * top.y + top.x) / (top.x * 2);
+                if (isBlockOpaqueTrans(x, topY)) {
+                    if (top.greaterOrEqual(topY * 2 + 1, x * 2) && !isBlockOpaqueTrans(x, topY + 1))
+                        topY++;
+                } else {
+                    int ax = x * 2; // center
+                    if (isBlockOpaqueTrans(x + 1, topY + 1)) ax++;
+                    if (top.greater(topY * 2 + 1, ax)) topY++;
+                }
+            }
             
-            // compute ray Y positions in the current column
-            final int bottom = getY(cur.x, cur.bottomX, cur.bottomY);
-            final int top = getY(cur.x, cur.topX, cur.topY);
+            int bottomY;
+            if (bottom.y == 0) {
+                bottomY = 0;
+            } else {
+                bottomY = ((x * 2 - 1) * bottom.y + bottom.x) / (bottom.x * 2);
+                if (bottom.greaterOrEqual(bottomY * 2 + 1, x * 2) && isBlockOpaqueTrans(x, bottomY) &&
+                    !isBlockOpaqueTrans(x, bottomY + 1)) {
+                    bottomY++;
+                }
+            }
             
-            // process the range
-            Optional<Boolean> wasLastOpaque = Optional.empty();
-            int bx = cur.bottomX, by = cur.bottomY;
-            int tx = cur.topX, ty = cur.topY;
-            for (int y = top; y >= bottom; y--) {
-                // mark the cell as visible
-                int wx = xFunc.applyAsInt(cur.x, y), wy = yFunc.applyAsInt(cur.x, y);
-                action.visible(wx, wy);
-                
-                boolean opaque = isOpaque(wx, wy);
-                if (wasLastOpaque.isPresent()) {
-                    if (opaque) {
-                        if (!wasLastOpaque.get()) {
-                            queue.add(new ColumnPortion(
-                                    cur.x + 1,
-                                    cur.x*2 - 1, y*2 + 1,
-                                    tx, ty
-                            ));
+            // go through the tiles in the column now that we know which ones could possibly be visible
+            int wasOpaque = -1; // 0:false, 1:true, -1:not applicable
+            for (int y = topY; y >= bottomY; y--) {
+                if (rangeLimit < 0 || Math.hypot(x, y) <= rangeLimit) {
+                    boolean isOpaque = isBlockOpaqueTrans(x, y);
+                    boolean isVisible = 
+                            isOpaque || ((y != topY || top.greater(y * 4 - 1, x * 4 + 1)) && (y != bottomY || bottom.less(y * 4 + 1, x * 4 - 1)));
+                    // NOTE: if you want the algorithm to be either fully or mostly symmetrical, replace the line above with the
+                    // following line (and uncomment the Slope.lessOrEqual method). the line ensures that a clear tile is visible
+                    // only if there's an unobstructed line to its center. if you want it to be fully symmetrical, also remove
+                    // the "isOpaque ||" part and see NOTE comments further down
+                    // boolean isVisible = isOpaque || ((y != topY || top.greaterOrEqual(y, x)) && (y != bottomY || bottom.lessOrEqual(y, x)));
+                    if (isVisible) visible(x, y);
+                    
+                    // if we found a transition from clear to opaque or vice versa, adjust the top and bottom vectors
+                    if (x != rangeLimit) {
+                        if (isOpaque) {
+                            if (wasOpaque == 0) {
+                                int nx = x * 2, ny = y * 2 + 1;
+                                // NOTE: if you're using full symmetry and want more expansive walls (recommended), comment out the next line
+                                if (isBlockOpaqueTrans(x, y + 1)) nx--;
+                                if (top.greater(ny, nx)) {
+                                    if (y == bottomY) {
+                                        bottom = new Slope(ny, nx); break;
+                                    } else
+                                        computeOctant(x + 1, top, new Slope(ny, nx));
+                                } else {
+                                    if (y == bottomY) return;
+                                }
+                            }
+                            wasOpaque = 1;
+                        } else {
+                            if (wasOpaque > 0) {
+                                int nx = x * 2, ny = y * 2 + 1;
+                                // NOTE: if you're using full symmetry and want more expansive walls (recommended), comment out the next line
+                                if (isBlockOpaqueTrans(x + 1, y + 1)) nx++;
+                                if (bottom.greaterOrEqual(ny, nx)) return;
+                                top = new Slope(ny, nx);
+                            }
+                            wasOpaque = 0;
                         }
-                    } else if (wasLastOpaque.get()) {
-                        tx = cur.x*2 + 1;
-                        ty = y*2 + 1;
                     }
                 }
-                wasLastOpaque = Optional.of(opaque);
             }
-            if (wasLastOpaque.isPresent() && !wasLastOpaque.get()) {
-                queue.add(new ColumnPortion(cur.x + 1, bx, by, tx, ty));
-            }
+        
+            if (wasOpaque != 0) break;
         }
     }
     
-    private int getY(int x, int dx, int dy) {
-        int num = (2*x - 1) * dy, den = 2*dx;
-        int inY  = getYQuot(num, den, dx);
-        int outY = getYQuot(num + 2*dy, den, dx);
-        return isOpaque(xFunc.applyAsInt(x, inY), yFunc.applyAsInt(x, inY))? inY : outY;
+    private boolean isBlockOpaqueTrans(int x, int y) {
+        return isBlockOpaque(xFunc.applyAsInt(x, y), yFunc.applyAsInt(x, y));
+    }
+    private boolean isBlockOpaque(int wx, int wy) {
+        return outOfBounds(wx, wy) || level.getTile(wx, wy).isOpaque();
     }
     
-    private int getYQuot(int num, int den, int dx) {
-        int quotient = num / den, remainder = num % den;
-        if (remainder > dx) quotient++;
-        return quotient;
+    private void visible(int x, int y) {
+        int wx = xFunc.applyAsInt(x, y), wy = yFunc.applyAsInt(x, y);
+        if (!outOfBounds(wx, wy)) {
+            action.visible(wx, wy);
+        }
     }
     
-    private boolean isOpaque(int wx, int wy) {
-        return level.getTile(wx, wy).isOpaque();
+    private boolean outOfBounds(int wx, int wy) {
+        return wx < 0 || wy < 0 || wx >= level.getWidth() || wy >= level.getHeight();
     }
     
     private final Level level;
     private final int cx, cy;
     private IntBinaryOperator xFunc, yFunc;
+    private Action action;
     
 }
