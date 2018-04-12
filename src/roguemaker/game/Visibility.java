@@ -7,22 +7,6 @@ import java.util.function.IntBinaryOperator;
  */
 public class Visibility {
     
-    //private static class ColumnPortion {
-    //    
-    //    final int x;
-    //    final int bottomX, bottomY;
-    //    final int topX, topY;
-    //    
-    //    ColumnPortion(int x, int bottomX, int bottomY, int topX, int topY) {
-    //        this.x = x;
-    //        this.bottomX = bottomX;
-    //        this.bottomY = bottomY;
-    //        this.topX = topX;
-    //        this.topY = topY;
-    //    }
-    //    
-    //}
-    
     private static class Slope {
         Slope(int y, int x) {
             this.x = x;
@@ -32,7 +16,7 @@ public class Visibility {
         boolean greater(int y, int x) { return this.y*x > this.x*y; }
         boolean greaterOrEqual(int y, int x) { return this.y*x >= this.x*y; }
         boolean less(int y, int x) { return this.y*x < this.x*y; }
-        boolean lessOrEqual(int y, int x) { return this.y*x <= this.x*y; }
+        //boolean lessOrEqual(int y, int x) { return this.y*x <= this.x*y; }
         
         final int x, y;
     }
@@ -42,9 +26,14 @@ public class Visibility {
     }
     
     public Visibility(Level level, int cx, int cy) {
+        this(level, cx, cy, -1);
+    }
+    
+    public Visibility(Level level, int cx, int cy, int range) {
         this.level = level;
         this.cx = cx;
         this.cy = cy;
+        this.rangeLimit = range;
     }
     
     /**
@@ -75,9 +64,12 @@ public class Visibility {
         computeOctant(1, new Slope(1, 1), new Slope(0, 1));
     }
     
-    private static final int rangeLimit = 15;
+    /**
+     * the main recursive method
+     */
     private void computeOctant(int x, Slope top, Slope bottom) {
-        for (; x <= rangeLimit; x++) {
+        int maxX = rangeLimit<0? Integer.MAX_VALUE : rangeLimit;
+        for (; x <= maxX; x++) {
             // compute the Y coordinates of the top and bottom of the sector. we maintain that top > bottom
             int topY;
             if (top.x == 1) {
@@ -108,7 +100,7 @@ public class Visibility {
             // go through the tiles in the column now that we know which ones could possibly be visible
             int wasOpaque = -1; // 0:false, 1:true, -1:not applicable
             for (int y = topY; y >= bottomY; y--) {
-                if (rangeLimit < 0 || Math.hypot(x, y) <= rangeLimit) {
+                if (rangeLimit < 0 || x*x + y*y <= rangeLimit*rangeLimit) {
                     boolean isOpaque = isBlockOpaqueTrans(x, y);
                     boolean isVisible = 
                             isOpaque || ((y != topY || top.greater(y * 4 - 1, x * 4 + 1)) && (y != bottomY || bottom.less(y * 4 + 1, x * 4 - 1)));
@@ -174,6 +166,7 @@ public class Visibility {
     
     private final Level level;
     private final int cx, cy;
+    private final int rangeLimit;
     private IntBinaryOperator xFunc, yFunc;
     private Action action;
     

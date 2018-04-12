@@ -32,7 +32,7 @@ public class Buffer {
                 TileType ttype = level.getTile(x, y);
                 long seed = ((((long) x) << 32) | (((long) y) << 2)) ^ ttype.hashCode();
     
-                Function<Color, Color> cFunc = level.visibility[x][y]? c -> c : c -> c.darker().darker().darker();
+                Function<Color, Color> cFunc = level.visibility[x][y]? c -> c : c -> c.darker().darker().darker().darker();
                 
                 loc.rand.setSeed(seed);
                 charGrid[x][y] = ttype.getChar(loc);
