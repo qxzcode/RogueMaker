@@ -28,9 +28,8 @@ public class Buffer {
             loc.x = x;
             for (int y = 0; y < height; y++) {
                 loc.y = y;
-                long seed = (((long) x) << 32) | (((long) y) << 2);
-                loc.rand.setSeed(seed);
                 TileType ttype = level.getTile(x, y);
+                long seed = ((((long) x) << 32) | (((long) y) << 2)) ^ ttype.hashCode();
                 
                 loc.rand.setSeed(seed);
                 charGrid[x][y] = ttype.getChar(loc);

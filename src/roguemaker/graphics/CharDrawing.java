@@ -47,11 +47,16 @@ public class CharDrawing {
         ByteBuffer data = BufferUtils.createByteBuffer(dataArr.length);
         data.put(dataArr).rewind();
         data = Objects.requireNonNull(stbi_load_from_memory(data, width, height, components, 1));
+        int imgWidth  = width.get();
+        int imgHeight = height.get();
+        charWidth  = imgWidth  / 16;
+        charHeight = imgHeight / 16;
+        
         texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width.get(), height.get(), 0, GL_RED, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, imgWidth, imgHeight, 0, GL_RED, GL_UNSIGNED_BYTE, data);
         stbi_image_free(data);
         
         // set texScale uniform
@@ -69,5 +74,7 @@ public class CharDrawing {
     }
     
     private static int vao, texture;
+    
+    public static int charWidth, charHeight;
     
 }

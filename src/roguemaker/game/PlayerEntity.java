@@ -29,7 +29,7 @@ public class PlayerEntity extends Entity {
     
     @Override
     public char getChar() {
-        return 'P';
+        return '@';
     }
     
     @Override

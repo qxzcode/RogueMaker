@@ -55,7 +55,7 @@ public class Main {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE); // the window will not be resizable
         
         // create the window
-        window = glfwCreateWindow(windowWidth, windowHeight, windowTitle, NULL, NULL);
+        window = glfwCreateWindow(10, 10, windowTitle, NULL, NULL);
         if (window == NULL)
             throw new RuntimeException("Failed to create the GLFW window");
         
@@ -76,19 +76,17 @@ public class Main {
             }
         });
         
-        // center the window
+        glfwMakeContextCurrent(window); // make the OpenGL context current
+        glfwSwapInterval(1); // enable v-sync
+    }
+    
+    private static void centerWindow() {
         GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         assert vidmode != null;
         glfwSetWindowPos(window,
                          (vidmode.width() - windowWidth) / 2,
                          (vidmode.height() - windowHeight) / 2
                         );
-        
-        glfwMakeContextCurrent(window); // make the OpenGL context current
-        glfwSwapInterval(1); // enable v-sync
-        
-        // make the window visible
-        glfwShowWindow(window);
     }
     
     private static void initGL() {
@@ -101,9 +99,16 @@ public class Main {
         shader.use();
         
         CharDrawing.init();
+        glfwSetWindowSize(window,
+                          RogueMaker.getLevel().getWidth()*CharDrawing.charWidth*2,
+                          RogueMaker.getLevel().getHeight()*CharDrawing.charHeight*2);
+        centerWindow();
     }
     
     private static void loop() {
+        // make the window visible
+        glfwShowWindow(window);
+        
         Buffer buffer = new Buffer(RogueMaker.getLevel().getWidth(), RogueMaker.getLevel().getHeight());
         
         long lastFPSTime = System.currentTimeMillis();
@@ -168,7 +173,7 @@ public class Main {
     
     private static long window;
     private static String windowTitle = "RogueMaker";
-    private static int windowWidth = 50*20*2, windowHeight = 30*20*2;
+    private static int windowWidth, windowHeight;
     public static ShaderProgram shader;
     
     static Set<Integer> pressedKeys = new HashSet<>();
