@@ -26,12 +26,16 @@ public class Level {
         entities.removeAll(entitiesToRemove);
         entitiesToRemove.clear();
         
+        computeVisibility();
+    }
+    
+    public void computeVisibility() {
         for (int x = 0; x < getWidth(); x++) {
             for (int y = 0; y < getHeight(); y++) {
                 visibility[x][y] = false;
             }
         }
-        Entity player = entities.iterator().next();
+        Entity player = RogueMaker.getPlayer().getEntity();
         new Visibility(this, player.x, player.y).compute((x, y) -> {
             visibility[x][y] = true;
             explored[x][y] = true;

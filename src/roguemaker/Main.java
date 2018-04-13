@@ -110,6 +110,8 @@ public class Main {
         glfwShowWindow(window);
         
         Buffer buffer = new Buffer(RogueMaker.getLevel().getWidth(), RogueMaker.getLevel().getHeight());
+        RogueMaker.getLevel().computeVisibility();
+        buffer.update(RogueMaker.getLevel());
         
         long lastFPSTime = System.currentTimeMillis();
         int fps = 0;

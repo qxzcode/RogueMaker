@@ -34,6 +34,11 @@ public class BasicPlayer implements Player {
         return false;
     }
     
+    @Override
+    public Entity getEntity() {
+        return player;
+    }
+    
     public Entity player;
     
 }
