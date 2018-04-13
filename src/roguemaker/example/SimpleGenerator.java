@@ -15,12 +15,8 @@ public class SimpleGenerator implements LevelGenerator {
     @Override
     public Level generate() {
         Level level = new Level(50, 30);
-        for (int x = 0; x < level.getWidth(); x++) {
-            for (int y = 0; y < level.getHeight(); y++) {
-                boolean isBorder = x==0 || y==0 || x==level.getWidth()-1 || y==level.getHeight()-1;
-                level.setTile(x, y, isBorder || (x*x/y + 3*y) % 3 == 1? WALL_ID : FLOOR_ID);
-            }
-        }
+        LevelGenerator.generateCaves(level, FLOOR_ID, WALL_ID, 0.5);
+        
         level.addEntity(new DerpEntity(level, 7, 6));
         level.addEntity(new PlayerEntity(level, 9, 4));
         return level;
