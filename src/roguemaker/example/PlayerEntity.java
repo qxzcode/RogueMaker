@@ -1,11 +1,9 @@
-package roguemaker.game;
+package roguemaker.example;
 
-import roguemaker.RogueMaker;
+import roguemaker.game.Level;
 import roguemaker.game.entity.Entity;
 
-import java.awt.*;
-
-import static org.lwjgl.glfw.GLFW.*;
+import java.awt.Color;
 
 /**
  * @author Quinn Tucker
@@ -18,14 +16,7 @@ public class PlayerEntity extends Entity {
     
     @Override
     public void update() {
-        if (RogueMaker.isKeyPressed(GLFW_KEY_0))
-            tryMove(UP);
-        if (RogueMaker.isKeyPressed(GLFW_KEY_SEMICOLON))
-            tryMove(DOWN);
-        if (RogueMaker.isKeyPressed(GLFW_KEY_O))
-            tryMove(LEFT);
-        if (RogueMaker.isKeyPressed(GLFW_KEY_LEFT_BRACKET))
-            tryMove(RIGHT);
+        
     }
     
     @Override

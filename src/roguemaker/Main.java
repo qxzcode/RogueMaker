@@ -123,8 +123,10 @@ public class Main {
                 fps = 0;
             }
             
-            RogueMaker.getLevel().update();
-            buffer.update(RogueMaker.getLevel());
+            if (RogueMaker.getPlayer().onFrame()) {
+                RogueMaker.getLevel().update();
+                buffer.update(RogueMaker.getLevel());
+            }
             
             // draw and stuff
             pressedKeys.clear();

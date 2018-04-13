@@ -1,6 +1,7 @@
 package roguemaker;
 
 import roguemaker.game.Level;
+import roguemaker.game.Player;
 import roguemaker.game.TileType;
 
 import java.util.ArrayList;
@@ -22,6 +23,17 @@ public class RogueMaker {
         return tileTypes.get(id);
     }
     
+    public static void registerPlayer(Player player) {
+        if (RogueMaker.player != null) {
+            throw new IllegalStateException("Only one Player may be registered");
+        }
+        RogueMaker.player = Objects.requireNonNull(player);
+    }
+    
+    public static Player getPlayer() {
+        return player;
+    }
+    
     public static Level getLevel() {
         return level;
     }
@@ -36,5 +48,6 @@ public class RogueMaker {
     
     private static ArrayList<TileType> tileTypes = new ArrayList<>();
     private static Level level;
+    private static Player player;
     
 }
