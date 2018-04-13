@@ -31,6 +31,9 @@ public class BasicPlayer implements Player {
         if (RogueMaker.isKeyPressed(GLFW_KEY_LEFT_BRACKET)) {
             return player.tryMove(RIGHT);
         }
+        if (RogueMaker.isKeyPressed(GLFW_KEY_P)) {
+            return true; // rest
+        }
         return false;
     }
     

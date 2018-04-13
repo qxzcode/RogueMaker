@@ -12,12 +12,25 @@ public interface LevelGenerator {
     }
     
     static void generateCaves(Level level, int floorTile, int wallTile, double density, int smoothness) {
-        // setup grids
-        boolean[][] grid1 = new boolean[level.getWidth()][level.getHeight()];
-        boolean[][] grid2 = new boolean[level.getWidth()][level.getHeight()];
+        boolean[][] grid = generateCaves(level.getWidth(), level.getHeight(), density, smoothness);
         for (int x = 0; x < level.getWidth(); x++) {
             for (int y = 0; y < level.getHeight(); y++) {
-                boolean isBorder = x==0 || y==0 || x==level.getWidth()-1 || y==level.getHeight()-1;
+                level.setTile(x, y, grid[x][y]? wallTile : floorTile);
+            }
+        }
+    }
+    
+    static boolean[][] generateCaves(int width, int height, double density) {
+        return generateCaves(width, height, density, 5);
+    }
+    
+    static boolean[][] generateCaves(int width, int height, double density, int smoothness) {
+        // setup grids
+        boolean[][] grid1 = new boolean[width][height];
+        boolean[][] grid2 = new boolean[width][height];
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                boolean isBorder = x==0 || y==0 || x==width-1 || y==height-1;
                 grid1[x][y] = isBorder || Math.random() < density;
             }
         }
@@ -25,8 +38,8 @@ public interface LevelGenerator {
         // apply cellular automaton
         for (int n = 0; n < smoothness*2; n++) {
             // compute the next step
-            for (int x = 1; x < level.getWidth()-1; x++) {
-                for (int y = 1; y < level.getHeight()-1; y++) {
+            for (int x = 1; x < width-1; x++) {
+                for (int y = 1; y < height-1; y++) {
                     int count = 0;
                     if (grid1[x+1][y]) count++;
                     if (grid1[x-1][y]) count++;
@@ -46,12 +59,8 @@ public interface LevelGenerator {
             grid2 = tmp;
         }
         
-        // fill the Level
-        for (int x = 0; x < level.getWidth(); x++) {
-            for (int y = 0; y < level.getHeight(); y++) {
-                level.setTile(x, y, grid1[x][y]? wallTile : floorTile);
-            }
-        }
+        // return
+        return grid1;
     }
     
 }
