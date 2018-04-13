@@ -35,7 +35,7 @@ public class Buffer {
                 Function<Color, Color> cFunc = level.visibility[x][y]?
                                                    c -> c :
                                                    level.explored[x][y]?
-                                                       c -> c.darker().darker().darker().darker() :
+                                                       c -> c.darker().darker().darker() :
                                                        c -> Color.BLACK;
                 
                 loc.rand.setSeed(seed);

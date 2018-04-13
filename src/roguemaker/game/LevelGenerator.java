@@ -30,13 +30,14 @@ public interface LevelGenerator {
         boolean[][] grid2 = new boolean[width][height];
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                boolean isBorder = x==0 || y==0 || x==width-1 || y==height-1;
-                grid1[x][y] = isBorder || Math.random() < density;
+                double borderDist = Math.min(Math.min(x, y), Math.min(width-1-x, height-1-y)) / 3.0;
+                double d = borderDist > 1? density : 1 + (density-1)*borderDist;
+                grid1[x][y] = grid2[x][y] = Math.random() < d;
             }
         }
         
         // apply cellular automaton
-        for (int n = 0; n < smoothness*2; n++) {
+        for (int n = 0; n < smoothness; n++) {
             // compute the next step
             for (int x = 1; x < width-1; x++) {
                 for (int y = 1; y < height-1; y++) {
