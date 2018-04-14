@@ -25,6 +25,11 @@ public abstract class TileType {
             this.rand = new Random();
         }
         
+        public void setSeed(long seed) {
+            rand.setSeed(seed);
+            rand.nextDouble(); // stir up the entropy
+        }
+        
         public Level level;
         public int x, y;
         public Random rand;

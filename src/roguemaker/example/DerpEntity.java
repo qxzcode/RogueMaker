@@ -10,8 +10,8 @@ import java.awt.*;
  */
 public class DerpEntity extends Entity {
     
-    public DerpEntity(Level level, int x, int y) {
-        super(level, x, y);
+    public DerpEntity(int x, int y) {
+        super(x, y);
     }
     
     @Override

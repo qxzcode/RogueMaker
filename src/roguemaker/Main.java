@@ -100,8 +100,8 @@ public class Main {
         
         CharDrawing.init();
         glfwSetWindowSize(window,
-                          RogueMaker.getLevel().getWidth()*CharDrawing.charWidth*2,
-                          RogueMaker.getLevel().getHeight()*CharDrawing.charHeight*2);
+                          RogueMaker.getLevel().getWidth()*CharDrawing.charWidth*3,
+                          RogueMaker.getLevel().getHeight()*CharDrawing.charHeight*3);
         centerWindow();
     }
     

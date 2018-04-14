@@ -52,9 +52,12 @@ public class Level {
         tiles[x][y] = RogueMaker.getTileType(id);
     }
     
-    public void addEntity(Entity e) {
-        assert e.x >= 0 && e.y >= 0 && e.x < width && e.y < height;
+    public Entity addEntity(Entity e) {
+        if (e.x < 1 || e.y < 1 || e.x >= width-1 || e.y >= height-1)
+            throw new IllegalArgumentException("Tried to add an Entity out of bounds");
+        e.level = this;
         entities.add(e);
+        return e;
     }
     public void removeEntity(Entity e) {
         entitiesToRemove.add(e);

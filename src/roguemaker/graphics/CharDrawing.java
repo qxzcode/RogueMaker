@@ -43,7 +43,7 @@ public class CharDrawing {
         IntBuffer width = BufferUtils.createIntBuffer(1);
         IntBuffer height = BufferUtils.createIntBuffer(1);
         IntBuffer components = BufferUtils.createIntBuffer(1);
-        byte[] dataArr = Main.loadResource("resources/font.png");
+        byte[] dataArr = Main.loadResource("resources/font DF.png");
         ByteBuffer data = BufferUtils.createByteBuffer(dataArr.length);
         data.put(dataArr).rewind();
         data = Objects.requireNonNull(stbi_load_from_memory(data, width, height, components, 1));

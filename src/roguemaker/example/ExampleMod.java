@@ -4,9 +4,11 @@ import roguemaker.Mod;
 import roguemaker.RogueMaker;
 import roguemaker.game.BasicPlayer;
 import roguemaker.game.BasicTileType;
+import roguemaker.game.entity.Entity;
+import roguemaker.game.entity.VisualAttribute;
 import roguemaker.graphics.ColorRange;
 
-import java.awt.*;
+import java.awt.Color;
 
 /**
  * @author Quinn Tucker
@@ -17,11 +19,14 @@ public class ExampleMod {
     public ExampleMod() {
         // register tile types
         FLOOR_ID = RogueMaker.registerTileType(new BasicTileType(
-                '.', Color.LIGHT_GRAY, new ColorRange(0.98f, 0.02f),
+                (char)249,
+                new ColorRange(0.65f, 0.04f, 0.7f, 0.05f, 0.70f, 0.03f),
+                //new ColorRange(0.35f, 0.07f, 0.7f, 0.05f, 0.90f, 0.1f),
+                new ColorRange(0.65f, 0.04f, 0.7f, 0.05f, 0.15f, 0.03f),
                 false, false
         ));
         WALL_ID  = RogueMaker.registerTileType(new BasicTileType(
-                '#', Color.BLACK,      new ColorRange(0.5f, 0.05f),
+                '#', new ColorRange(0.5f, 0.05f), new ColorRange(0.9f, 0.05f),
                 true, true
         ));
         
@@ -29,8 +34,10 @@ public class ExampleMod {
         RogueMaker.setLevel(new SimpleGenerator().generate());
         
         // register the player
-        PlayerEntity player = new PlayerEntity(RogueMaker.getLevel(), 9, 4);
-        RogueMaker.getLevel().addEntity(player);
+        Entity player = RogueMaker.getLevel().addEntity(new Entity(
+                25, 15,
+                new VisualAttribute('@', Color.ORANGE.darker())
+        ));
         RogueMaker.registerPlayer(new BasicPlayer(player));
     }
     

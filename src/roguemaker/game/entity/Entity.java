@@ -10,8 +10,7 @@ import java.util.*;
  */
 public class Entity {
     
-    public Entity(Level level, int x, int y, Attribute... attrs) {
-        this.level = Objects.requireNonNull(level);
+    public Entity(int x, int y, Attribute... attrs) {
         this.x = x;
         this.y = y;
         this.attributes = new ArrayList<>(Arrays.asList(attrs));

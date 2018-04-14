@@ -16,7 +16,7 @@ public class SimpleGenerator implements LevelGenerator {
         Level level = new Level(50, 30);
         LevelGenerator.generateCaves(level, FLOOR_ID, WALL_ID, 0.45);
         
-        level.addEntity(new DerpEntity(level, 7, 6));
+        level.addEntity(new DerpEntity(7, 6));
         return level;
     }
     
