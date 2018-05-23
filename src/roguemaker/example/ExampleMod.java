@@ -4,8 +4,7 @@ import roguemaker.Mod;
 import roguemaker.RogueMaker;
 import roguemaker.game.BasicPlayer;
 import roguemaker.game.BasicTileType;
-import roguemaker.game.entity.Entity;
-import roguemaker.game.entity.VisualAttribute;
+import roguemaker.game.entity.*;
 import roguemaker.graphics.ColorRange;
 
 import java.awt.Color;
@@ -36,10 +35,16 @@ public class ExampleMod {
         // register the player
         Entity player = RogueMaker.getLevel().addEntity(new Entity(
                 25, 15,
-                new VisualAttribute('@', Color.ORANGE.darker())
+                new VisualAttribute('@', Color.ORANGE.darker()),
+                new MoveAttribute(new WalkSubAttribute())
         ));
         RogueMaker.registerPlayer(new BasicPlayer(player));
     }
+    
+    public static EntityFactory derpFactory = (x, y) -> new Entity(
+            x, y,
+            new VisualAttribute('d', Color.CYAN.darker())
+    );
     
     public static int FLOOR_ID, WALL_ID;
     

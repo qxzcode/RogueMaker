@@ -14,12 +14,12 @@ public class VisualAttribute extends Attribute {
     }
     
     @Override
-    public Optional<Character> getChar(Optional<Character> prev) {
+    public Optional<Character> getChar() {
         return Optional.of(c);
     }
     
     @Override
-    public Optional<Color> getColor(Optional<Color> prev) {
+    public Optional<Color> getColor() {
         return Optional.of(color);
     }
     
